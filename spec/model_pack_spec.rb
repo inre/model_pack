@@ -35,10 +35,10 @@ describe ModelPack::ClassMethods do
       end
     end
 
-    line = Line.new({
+    line = Line.new(
         from: { x: 1, y: 1 },
         to: { x: 3, y: 5}
-    })
+    )
     expect(line.from).to be_a(Point)
     expect(line.to).to be_a(Point)
     expect(line.from.attributes).to include({x: 1, y: 1})
