@@ -142,4 +142,19 @@ describe ModelPack::ClassMethods do
     expect(int_data.serializable_hash[:integer]).to be(5)
   end
 
+  it "should have initialize" do
+    class StringBuffer
+      include ModelPack::Document
+
+      attribute :buffer, default: ''
+      attribute :position
+
+      def initialize
+        @position = buffer.size
+      end
+    end
+
+    buffer = StringBuffer.new(buffer: 'Lorem Ipsum')
+    expect(buffer.position).to be(11)
+  end
 end
