@@ -133,7 +133,13 @@ describe ModelPack::ClassMethods do
   end
 
   it "should serialize model with custom serializer" do
+    class IntData
+      include ModelPack::Document
+      attribute :integer, serialize: lambda { |v| 5 }
+    end
 
+    int_data = IntData.new(integer: 13)
+    expect(int_data.serializable_hash[:integer]).to be(5)
   end
 
 end
