@@ -102,9 +102,9 @@ puts polygon_copy
 ```ruby
 class SecureData
 	include ModelPack::Document
-	attribute :hidden_field, writer: lambda { |v| nil }
-	attribute :const_field, writer: lambda { |v| :always_this }
-	attribute :always_string, writer: lambda { |v| v.to_s }
+	attribute :hidden_field, serialize: lambda { |v| nil }
+	attribute :const_field, serialize: lambda { |v| :always_this }
+	attribute :always_string, serialize: lambda { |v| v.to_s }
 end
 secure_data = SecureData.new( hidden_field: "secured text", const_field: :some_value, always_string: 55)
 unsecure_hash = secure_data.serializable_hash
