@@ -157,4 +157,32 @@ describe ModelPack::ClassMethods do
     buffer = StringBuffer.new(buffer: 'Lorem Ipsum')
     expect(buffer.position).to be(11)
   end
+
+  it "should have peredicate method" do
+    class OptionsWithPredicate
+      include ModelPack::Document
+
+      attribute :save, predicate: true
+      attribute :load, predicate: lambda { |v| !!v ? 'YES' : 'NO'  }
+    end
+
+    owp = OptionsWithPredicate.new(
+      save: true,
+      load: true
+    )
+    expect(owp.save?).to be true
+    expect(owp.load?).to eq('YES')
+
+    owp = OptionsWithPredicate.new(
+      save: false,
+      load: false
+    )
+    expect(owp.save?).to be false
+    expect(owp.load?).to eq('NO')
+
+    owp = OptionsWithPredicate.new
+
+    expect(owp.save?).to be false
+    expect(owp.load?).to eq('NO')
+  end
 end
