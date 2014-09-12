@@ -60,9 +60,9 @@ puts line.length
 ```ruby
 class Polygon
 	include ModelPack::Document
-  
+
 	array :points, class_name: Point
-  
+
 	def sides
 		return [] if points.size < 2
 		[[points.first]].tap do |sides|
@@ -73,7 +73,7 @@ class Polygon
       			sides.last.push(points.first)
     		end
  	end
- 
+
 	def perimeter
 		sides.inject(0) { |sum, side| sum + Math.sqrt((side[0].x-side[1].x)**2 + (side[0].y-side[1].y)**2) }
 	end
@@ -86,7 +86,7 @@ puts polygon.perimeter
 
 ```ruby
 polygon = Polygon.new(points: [{x: 0, y: 0}, {x:5, y:0}, {x:5, y:5}])
-json = polygon.as_json()     # same serializable_hash
+json = polygon.as_json     # same serializable_hash
 ```
 
 ### Копирование моделей
@@ -94,7 +94,7 @@ json = polygon.as_json()     # same serializable_hash
 ```ruby
 polygon = Polygon.new(points: [{x: 3, y: 3}, {x:2, y:1}, {x:4, y:2}])
 polygon_copy = polygon.copy   # same polygon_copy = Polygon.new(polygon.serializable_hash)
-puts polygon_copy
+puts polygon_copy.serializable_hash
 ```
 
 ### Выборочная сериализация
