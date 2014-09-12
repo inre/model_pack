@@ -122,21 +122,32 @@ describe ModelPack::ClassMethods do
     end
   end
 
-  it "should model have dictionary field" do
+  it "should model have nary field" do
     class Options
       include ModelPack::Document
 
       dictionary :options
+      dictionary :points, class_name: Point
 
       def method_missing(name, *a)
         options[name]
       end
     end
 
-    options = Options.new(options: { a: 5, b: 6 })
+    options = Options.new(
+      options: { a: 5, b: 6 },
+      points: {
+        "a" => {x:0, y:1},
+        "b" => {x:1, y:3},
+        "c" => {x:3, y:2}
+      }
+    )
 
     expect(options.a).to be(5)
     expect(options.b).to be(6)
+    expect(options.points['a'].x).to be(0)
+    expect(options.points['b'].y).to be(3)
+    expect(options.points['c'].y).to be(2)
   end
 
   it "should initizalize with string attributes" do
@@ -218,5 +229,4 @@ describe ModelPack::ClassMethods do
     expect(copy_true_data.serializable_hash[:bit]).to be true
     expect(copy_false_data.serializable_hash[:bit]).to be false
   end
->>>>>>> 51c9018fda823193b7302a527579a9f12fc7e67b
 end
