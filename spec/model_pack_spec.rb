@@ -115,11 +115,11 @@ describe ModelPack::ClassMethods do
     end
   end
 
-  it "should model have hashable field" do
+  it "should model have dictionary field" do
     class Options
       include ModelPack::Document
 
-      hashable :options
+      dictionary :options
 
       def method_missing(name, *a)
         options[name]
@@ -132,8 +132,10 @@ describe ModelPack::ClassMethods do
     expect(options.b).to be(6)
   end
 
-  it "should serialize model with custom serializer" do
-
+  it "should initizalize with string attributes" do
+    point = Point.new({"x" => 3, "y" => 5})
+    expect(point.x).to be(3)
+    expect(point.y).to be(5)
+    expect(point.attributes).to include({x: 3, y: 5})
   end
-
 end

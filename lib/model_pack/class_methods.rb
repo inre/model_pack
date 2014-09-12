@@ -41,10 +41,11 @@ module ModelPack
           writer: writer || lambda { |array| array.collect { |v| v.is_a?(Hash) && class_name ? class_name.new(v) : v } })
     end
 
-    def hashable(name, default: nil, serialize: nil)
+    def dictionary(name, class_name: nil, default: nil, serialize: nil, writer: nil)
       attribute(name,
           default: default,
           serialize: serialize,
+          writer: writer || lambda { |dictionary| Hash[dictionary.map { |k,v| [k, v.is_a?(Hash) && class_name ? class_name.new(v) : v]}] },
           as: Hash)
     end
   end
