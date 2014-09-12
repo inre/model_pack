@@ -192,4 +192,23 @@ describe ModelPack::ClassMethods do
     expect(owp.save?).to be false
     expect(owp.load?).to eq('NO')
   end
+
+
+  it "should boolean type works well" do
+    class BooleanData
+      include ModelPack::Document
+
+      attribute :bit
+    end
+
+    true_data = BooleanData.new(bit: true)
+    false_data = BooleanData.new(bit: false)
+    copy_true_data = true_data.copy
+    copy_false_data = false_data.copy
+
+    expect(true_data.serializable_hash[:bit]).to be true
+    expect(false_data.serializable_hash[:bit]).to be false
+    expect(copy_true_data.serializable_hash[:bit]).to be true
+    expect(copy_false_data.serializable_hash[:bit]).to be false
+  end
 end
