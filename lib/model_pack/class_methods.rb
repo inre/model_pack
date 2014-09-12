@@ -44,7 +44,7 @@ module ModelPack
           default: default,
           serialize: serialize,
           as: Array,
-          writer: writer || lambda { |array| array.collect { |v| v.is_a?(Hash) && class_name ? class_name.new(v) : v } })
+          writer: writer || lambda { |array| array.is_a?(Array) ? (array.collect { |v| v.is_a?(Hash) && class_name ? class_name.new(v) : v }) : [] })
     end
 
     def hashable(name, default: nil, serialize: nil)
