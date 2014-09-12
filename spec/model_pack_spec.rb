@@ -23,6 +23,13 @@ describe ModelPack::ClassMethods do
     expect(point.attributes).to include({x: 3, y: 5})
   end
 
+  it "should update_attributes change values" do
+    point = Point.new(x: 4, y: 6)
+    point.update_attributes(x:3, y:2)
+    expect(point.x).to be(3)
+    expect(point.y).to be(2)
+  end
+
   it "should create embedded models" do
     class Line
       include ModelPack::Document
@@ -138,4 +145,78 @@ describe ModelPack::ClassMethods do
     expect(point.y).to be(5)
     expect(point.attributes).to include({x: 3, y: 5})
   end
+
+  it "should serialize model with custom serializer" do
+    class IntData
+      include ModelPack::Document
+      attribute :integer, serialize: lambda { |v| 5 }
+    end
+
+    int_data = IntData.new(integer: 13)
+    expect(int_data.serializable_hash[:integer]).to be(5)
+  end
+
+  it "should have initialize" do
+    class StringBuffer
+      include ModelPack::Document
+
+      attribute :buffer, default: ''
+      attribute :position
+
+      def initialize
+        @position = buffer.size
+      end
+    end
+
+    buffer = StringBuffer.new(buffer: 'Lorem Ipsum')
+    expect(buffer.position).to be(11)
+  end
+
+  it "should have peredicate method" do
+    class OptionsWithPredicate
+      include ModelPack::Document
+
+      attribute :save, predicate: true
+      attribute :load, predicate: lambda { |v| !!v ? 'YES' : 'NO'  }
+    end
+
+    owp = OptionsWithPredicate.new(
+      save: true,
+      load: true
+    )
+    expect(owp.save?).to be true
+    expect(owp.load?).to eq('YES')
+
+    owp = OptionsWithPredicate.new(
+      save: false,
+      load: false
+    )
+    expect(owp.save?).to be false
+    expect(owp.load?).to eq('NO')
+
+    owp = OptionsWithPredicate.new
+
+    expect(owp.save?).to be false
+    expect(owp.load?).to eq('NO')
+  end
+
+
+  it "should boolean type works well" do
+    class BooleanData
+      include ModelPack::Document
+
+      attribute :bit
+    end
+
+    true_data = BooleanData.new(bit: true)
+    false_data = BooleanData.new(bit: false)
+    copy_true_data = true_data.copy
+    copy_false_data = false_data.copy
+
+    expect(true_data.serializable_hash[:bit]).to be true
+    expect(false_data.serializable_hash[:bit]).to be false
+    expect(copy_true_data.serializable_hash[:bit]).to be true
+    expect(copy_false_data.serializable_hash[:bit]).to be false
+  end
+>>>>>>> 51c9018fda823193b7302a527579a9f12fc7e67b
 end

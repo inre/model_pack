@@ -1,8 +1,8 @@
 module ModelPack
   module ClassMethods
 
-    def attribute(name, writer: lambda { |v| v }, default: nil, as: nil, serialize: nil)
-      attribute_reader(name, default: default, as: as, serialize: serialize)
+    def attribute(name, writer: lambda { |v| v }, default: nil, as: nil, serialize: nil, predicate: nil)
+      attribute_reader(name, default: default, as: as, serialize: serialize, predicate: predicate)
       attribute_writer(name, writer: writer)
       register_attribute(name)
     end
@@ -13,13 +13,19 @@ module ModelPack
       end
     end
 
-    def attribute_reader(name, default: nil, as: nil, serialize: nil)
+    def attribute_reader(name, default: nil, as: nil, serialize: nil, predicate: nil)
       default_dup = default.dup rescue default
       default_value = default_dup || (as && as.new)
 
       define_method name do
         instance_variable_defined?("@#{name}") ? instance_variable_get("@#{name}") : instance_variable_set("@#{name}", default_value)
       end
+
+      # define predicate method if required
+      define_method "#{name}?" do
+        value = (instance_variable_defined?("@#{name}") ? instance_variable_get("@#{name}") : instance_variable_set("@#{name}", default_value))
+        predicate.is_a?(Proc) ? predicate.call(value)  : !!value  # false for nil or false
+      end if predicate
 
       define_method "#{name}_hash" do
         instance_exec(send(name), &serialize)
@@ -38,7 +44,7 @@ module ModelPack
           default: default,
           serialize: serialize,
           as: Array,
-          writer: writer || lambda { |array| array.collect { |v| v.is_a?(Hash) && class_name ? class_name.new(v) : v } })
+          writer: writer || lambda { |array| array.is_a?(Array) ? (array.collect { |v| v.is_a?(Hash) && class_name ? class_name.new(v) : v }) : [] })
     end
 
     def dictionary(name, class_name: nil, default: nil, serialize: nil, writer: nil)

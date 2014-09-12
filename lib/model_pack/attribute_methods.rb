@@ -18,14 +18,14 @@ module ModelPack
       self.class.attribute_names.inject({}) { |h, name| h[name] = send(name); h  }
     end
 
-    def update_attributes(*attributes)
+    def update_attributes(attributes)
       attributes.each do |name, attribute|
         key = "#{name}="
         send(key, attribute) if respond_to?(key)
       end
     end
 
-    def update_attributes!(*attributes)
+    def update_attributes!(attributes)
       # check present first
       attributes.each do |name, attribute|
         raise ArgumentError, "undefined attribute `#{name}`" unless attribute_names.include?(method)

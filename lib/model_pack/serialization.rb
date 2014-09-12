@@ -53,7 +53,8 @@ module ModelPack
         when Hash
           enumerable_value[value, opts, global]
         end
-        hash[n] = data if data
+
+        hash[n] = data unless data.nil?
       end
       hash
     end
