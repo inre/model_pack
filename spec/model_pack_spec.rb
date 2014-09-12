@@ -23,6 +23,13 @@ describe ModelPack::ClassMethods do
     expect(point.attributes).to include({x: 3, y: 5})
   end
 
+  it "should update_attributes change values" do
+    point = Point.new(x: 4, y: 6)
+    point.update_attributes(x:3, y:2)
+    expect(point.x).to be(3)
+    expect(point.y).to be(2)
+  end
+
   it "should create embedded models" do
     class Line
       include ModelPack::Document
