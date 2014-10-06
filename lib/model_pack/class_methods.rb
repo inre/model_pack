@@ -15,15 +15,17 @@ module ModelPack
 
     def attribute_reader(name, default: nil, as: nil, serialize: nil, predicate: nil)
       default_dup = default.dup rescue default
-      default_value = default_dup || (as && as.new)
+      default_value = default_dup || as
 
       define_method name do
-        instance_variable_defined?("@#{name}") ? instance_variable_get("@#{name}") : instance_variable_set("@#{name}", default_value)
+        instance_variable_defined?("@#{name}") ?
+          instance_variable_get("@#{name}") : instance_variable_set("@#{name}", (default_value.is_a?(Class) ? default_value.new : default_value))
       end
 
       # define predicate method if required
       define_method "#{name}?" do
-        value = (instance_variable_defined?("@#{name}") ? instance_variable_get("@#{name}") : instance_variable_set("@#{name}", default_value))
+        value = (instance_variable_defined?("@#{name}") ?
+          instance_variable_get("@#{name}") : instance_variable_set("@#{name}", (default_value.is_a?(Class) ? default_value.new : default_value)))
         predicate.is_a?(Proc) ? predicate.call(value)  : !!value  # false for nil or false
       end if predicate
 

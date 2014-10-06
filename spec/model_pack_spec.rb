@@ -211,7 +211,6 @@ describe ModelPack::ClassMethods do
     expect(owp.load?).to eq('NO')
   end
 
-
   it "should boolean type works well" do
     class BooleanData
       include ModelPack::Document
@@ -228,5 +227,19 @@ describe ModelPack::ClassMethods do
     expect(false_data.serializable_hash[:bit]).to be false
     expect(copy_true_data.serializable_hash[:bit]).to be true
     expect(copy_false_data.serializable_hash[:bit]).to be false
+  end
+
+  it "should create unique array for each instance" do
+    class ArrayData
+      include ModelPack::Document
+
+      array :data
+    end
+
+    array1 = ArrayData.new
+    array1.data << 1
+    array2 = ArrayData.new
+    expect(array1.data.size).to be 1
+    expect(array2.data.size).to be 0
   end
 end
