@@ -89,7 +89,7 @@ describe ModelPack::ClassMethods do
     expect(json[:points][2]).to include({x: 5, y:5})
   end
 
-  it "should serialize model with custom serializer" do
+  it "should each attribute use writer" do
     class SecureData
       include ModelPack::Document
 
@@ -103,6 +103,32 @@ describe ModelPack::ClassMethods do
     expect(unsecure_hash).not_to include(:hidden_field)
     expect(unsecure_hash).to include(const_field: :always_this)
     expect(unsecure_hash).to include(always_string: "55")
+  end
+
+  it "should serialize with custom serializers" do
+    class SecureDataSerialized
+      include ModelPack::Document
+
+      attribute :hidden_field, serialize: lambda { |v| nil }
+      attribute :const_field, serialize: lambda { |v| :always_this }
+      attribute :always_string, serialize: lambda { |v| v.to_s }
+    end
+
+    secure_data = SecureDataSerialized.new( hidden_field: "secured text", const_field: :some_value, always_string: 55)
+    unsecure_hash = secure_data.serializable_hash
+    expect(unsecure_hash).not_to include(:hidden_field)
+    expect(unsecure_hash).to include(const_field: :always_this)
+    expect(unsecure_hash).to include(always_string: "55")
+  end
+
+  it "should argument error method with name *method* already exists" do
+    expect {
+      class Request
+        include ModelPack::Document
+
+        attribute :method, default: "get"
+      end
+    }.to raise_error
   end
 
   it "should serialize and load back model" do

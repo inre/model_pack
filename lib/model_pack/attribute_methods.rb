@@ -4,6 +4,7 @@ module ModelPack
 
     class_methods do
       def register_attribute(name)
+        raise ArgumentError, "class already have method with name `#{name}`" if respond_to?(name)
         raise ArgumentError, "dublicate attribute with name `#{name}`" if attribute_names.include?(name)
         attribute_names.push name
         nil

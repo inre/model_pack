@@ -55,6 +55,17 @@ line = Line.new(
 puts line.length
 ```
 
+### Перекрываем запись аттрибутов
+
+```ruby
+class Text
+  attribute :always_string, writer: ->(v) { v.to_s }
+end
+
+text = Text.new(always_string: 123)
+puts text.always_string # "123"
+```
+
 ### Массив моделей
 
 ```ruby

@@ -2,9 +2,9 @@ module ModelPack
   module ClassMethods
 
     def attribute(name, writer: lambda { |v| v }, default: nil, as: nil, serialize: nil, predicate: nil)
+      register_attribute(name)
       attribute_reader(name, default: default, as: as, serialize: serialize, predicate: predicate)
       attribute_writer(name, writer: writer)
-      register_attribute(name)
     end
 
     def attribute_writer(name, writer: lambda { |v| v })
