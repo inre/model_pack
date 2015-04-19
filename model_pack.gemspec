@@ -6,9 +6,9 @@ require 'model_pack/version'
 Gem::Specification.new do |spec|
   spec.name          = "model_pack"
   spec.version       = ModelPack::VERSION
-  spec.authors       = ["che"]
-  spec.email         = ["chelovekov@gmail.com"]
-  spec.summary       = %q{Model Pack – simple model interfaces.}
+  spec.authors       = ["inre"]
+  spec.email         = ["inre.strom@gmail.com"]
+  spec.summary       = %q{Model Pack – simple models}
   #spec.description   = %q{TODO: Write a longer description. Optional.}
   spec.homepage      = ""
   spec.license       = "MIT"
