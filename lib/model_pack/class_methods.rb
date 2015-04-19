@@ -34,10 +34,11 @@ module ModelPack
       end if serialize
     end
 
-    def object(name, class_name: nil, default: nil, serialize: nil)
+    def object(name, class_name: nil, default: nil, serialize: nil, predicate: nil)
       attribute(name,
         default: default,
         serialize: serialize,
+        predicate: predicate,
         writer: lambda { |v| v.is_a?(Hash) && class_name ? class_name.new(v) : v })
     end
 
