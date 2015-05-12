@@ -1,3 +1,3 @@
 module ModelPack
-  VERSION = "0.9.5"
+  VERSION = "0.9.10"
 end

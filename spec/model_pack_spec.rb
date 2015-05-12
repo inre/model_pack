@@ -268,4 +268,35 @@ describe ModelPack::ClassMethods do
     expect(array1.data.size).to be 1
     expect(array2.data.size).to be 0
   end
+
+  it "supports boolean as default" do
+    class BooleanData
+      include ModelPack::Document
+
+      attribute :always_false, default: false
+      attribute :always_true,  default: true
+      attribute :dynamic_default, default: lambda { 1+5 }
+    end
+
+    data = BooleanData.new
+
+    expect(data.always_false).to be false
+    expect(data.always_true).to be true
+    expect(data.dynamic_default).to be 6
+  end
+
+  it "as class in model" do
+    class NestedObject
+      include ModelPack::Document
+      attribute :a, default: 5
+    end
+
+    class ParentObject
+      include ModelPack::Document
+      object :nested, class_name: NestedObject, as: NestedObject
+    end
+
+    parent = ParentObject.new
+    expect(parent.nested.a).to be 5
+  end
 end

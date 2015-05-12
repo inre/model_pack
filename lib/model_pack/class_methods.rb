@@ -14,18 +14,17 @@ module ModelPack
     end
 
     def attribute_reader(name, default: nil, as: nil, serialize: nil, predicate: nil)
-      default_dup = default.dup rescue default
-      default_value = default_dup || as
+      dv = default.dup rescue default
 
       define_method name do
         instance_variable_defined?("@#{name}") ?
-          instance_variable_get("@#{name}") : instance_variable_set("@#{name}", (default_value.is_a?(Class) ? default_value.new : default_value))
+          instance_variable_get("@#{name}") : instance_variable_set("@#{name}", (as ? as.new : (dv.is_a?(Proc) ? dv.call : dv )))
       end
 
       # define predicate method if required
       define_method "#{name}?" do
         value = (instance_variable_defined?("@#{name}") ?
-          instance_variable_get("@#{name}") : instance_variable_set("@#{name}", (default_value.is_a?(Class) ? default_value.new : default_value)))
+          instance_variable_get("@#{name}") : instance_variable_set("@#{name}", (as ? as.new : (dv.is_a?(Proc) ? dv.call : dv ))))
         predicate.is_a?(Proc) ? predicate.call(value)  : !!value  # false for nil or false
       end if predicate
 
@@ -34,11 +33,12 @@ module ModelPack
       end if serialize
     end
 
-    def object(name, class_name: nil, default: nil, serialize: nil, predicate: nil)
+    def object(name, class_name: nil, default: nil, as: nil, serialize: nil, predicate: nil)
       attribute(name,
         default: default,
         serialize: serialize,
         predicate: predicate,
+        as: as,
         writer: lambda { |v| v.is_a?(Hash) && class_name ? class_name.new(v) : v })
     end
 
