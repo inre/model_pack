@@ -2,7 +2,7 @@ require "spec_helper"
 
 describe ModelPack::ClassMethods do
 
-  it "should create model with default fields" do
+  it "should create model with defaults" do
     class Point
       include ModelPack::Document
 
@@ -16,14 +16,14 @@ describe ModelPack::ClassMethods do
     expect(point.attributes).to include({x: 0, y: 0})
   end
 
-  it "should create model and fill it thought initialization" do
+  it "should create filled model" do
     point = Point.new(x: 3, y: 5)
     expect(point.x).to be(3)
     expect(point.y).to be(5)
     expect(point.attributes).to include({x: 3, y: 5})
   end
 
-  it "should update_attributes change values" do
+  it "should change attributes" do
     point = Point.new(x: 4, y: 6)
     point.update_attributes(x:3, y:2)
     expect(point.x).to be(3)
@@ -89,7 +89,7 @@ describe ModelPack::ClassMethods do
     expect(json[:points][2]).to include({x: 5, y:5})
   end
 
-  it "should each attribute use writer" do
+  it "should use each attribute like writer" do
     class SecureData
       include ModelPack::Document
 
@@ -121,7 +121,7 @@ describe ModelPack::ClassMethods do
     expect(unsecure_hash).to include(always_string: "55")
   end
 
-  it "should argument error method with name *method* already exists" do
+  it "should not allow method with name `method`" do
     expect {
       class Request
         include ModelPack::Document
@@ -131,7 +131,7 @@ describe ModelPack::ClassMethods do
     }.to raise_error
   end
 
-  it "should serialize and load back model" do
+  it "should serialize and upload model" do
     polygon = Polygon.new(points: [{x: 3, y: 3}, {x:2, y:1}, {x:4, y:2}])
     polygon_copy = Polygon.new(polygon.serializable_hash) # or as_json
     expect(polygon_copy.points).to be_a(Array)
@@ -140,7 +140,7 @@ describe ModelPack::ClassMethods do
     end
   end
 
-  it "should create copy of model" do
+  it "should copy model" do
     polygon = Polygon.new(points: [{x: 3, y: 3}, {x:2, y:1}, {x:4, y:2}])
     polygon_copy = polygon.copy
     polygon.points.each_with_index do |point, index|
@@ -148,7 +148,7 @@ describe ModelPack::ClassMethods do
     end
   end
 
-  it "should model have nary field" do
+  it "should have nary field" do
     class Options
       include ModelPack::Document
 
@@ -209,7 +209,7 @@ describe ModelPack::ClassMethods do
     expect(buffer.position).to be(11)
   end
 
-  it "should have peredicate method" do
+  it "should have predicate method" do
     class OptionsWithPredicate
       include ModelPack::Document
 
@@ -237,7 +237,7 @@ describe ModelPack::ClassMethods do
     expect(owp.load?).to eq('NO')
   end
 
-  it "should boolean type works well" do
+  it "should boolean type to work too" do
     class BooleanData
       include ModelPack::Document
 
@@ -255,7 +255,7 @@ describe ModelPack::ClassMethods do
     expect(copy_false_data.serializable_hash[:bit]).to be false
   end
 
-  it "should create unique array for each instance" do
+  it "should create unique array for each of instance" do
     class ArrayData
       include ModelPack::Document
 
@@ -263,13 +263,13 @@ describe ModelPack::ClassMethods do
     end
 
     array1 = ArrayData.new
-    array1.data << 1
+    array1.data § 1
     array2 = ArrayData.new
     expect(array1.data.size).to be 1
     expect(array2.data.size).to be 0
   end
 
-  it "supports boolean as default" do
+  it "supports boolean as default values" do
     class BooleanData
       include ModelPack::Document
 
@@ -285,7 +285,7 @@ describe ModelPack::ClassMethods do
     expect(data.dynamic_default).to be 6
   end
 
-  it "as class in model" do
+  it "has a class in the model" do
     class NestedObject
       include ModelPack::Document
       attribute :a, default: 5
@@ -294,9 +294,31 @@ describe ModelPack::ClassMethods do
     class ParentObject
       include ModelPack::Document
       object :nested, class_name: NestedObject, as: NestedObject
+      attribute :b, default: 1
     end
 
     parent = ParentObject.new
     expect(parent.nested.a).to be 5
+  end
+
+  it "inherits another document" do
+    class BaseDocument
+      include ModelPack::Document
+      attribute :param, default: 'val'
+    end
+
+    class CustomDocument < BaseDocument
+      include ModelPack::Document
+      attribute :first, default: 'foo'
+    end
+
+    class AnotherDocument < BaseDocument
+      include ModelPack::Document
+      attribute :second, default: 'bar'
+    end
+
+    expect(BaseDocument.new.attributes).to eq(param: 'val');
+    expect(CustomDocument.new.attributes).to eq(param: 'val', first: 'foo');
+    expect(AnotherDocument.new.attributes).to eq(param: 'val', second: 'bar');
   end
 end

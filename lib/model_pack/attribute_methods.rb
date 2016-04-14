@@ -11,7 +11,9 @@ module ModelPack
       end
 
       def attribute_names
-         class_variable_defined?(:@@attribute_names) ? class_variable_get(:@@attribute_names) : class_variable_set(:@@attribute_names, Array.new)
+         names = instance_variable_defined?(:@attribute_names) ?
+            instance_variable_get(:@attribute_names) :
+            instance_variable_set(:@attribute_names, superclass.respond_to?(:attribute_names) ? superclass.attribute_names.clone : Array.new)
       end
     end
 
