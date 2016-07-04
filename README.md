@@ -1,8 +1,9 @@
 # Model Pack - model interfaces
 
-Model Pack - набор интерфейсов, который позволяет создавать в объекте специальные аттрибуты.
-Также добавляет методы работы model attributes. Прозволяет сериализировать иерахнию модельных
-аттрибутов.
+Model Pack - набор интерфейсов, который позволяет создавать специальные атрибуты в объекте.
+Также добавляет методы работы model attributes. Позволяет сериализовывать атрибуты модели, сохраняя их правильную иерархию.
+
+Model Pack is an interfaces collection for creating object's attributes. It also adds methods for working with this attributes and allows to safely serialize your model without loosing their hierarchical structure.
 
 ## Installation
 
@@ -22,7 +23,7 @@ Or install it yourself as:
 
 ## Использование
 
-### Атрибуты и вложеные объекты
+### Атрибуты и вложенные объекты
 
 ```ruby
 class Point
@@ -44,7 +45,7 @@ class Line
 end
 ```
 
-Создаем эксземпляры модели:
+Создаем экземпляры модели:
 
 ```ruby
 point = Point.new(x: 3, y: 5)
@@ -55,7 +56,7 @@ line = Line.new(
 puts line.length
 ```
 
-### Перекрываем запись аттрибутов
+### Перекрываем запись атрибутов
 
 ```ruby
 class Text
