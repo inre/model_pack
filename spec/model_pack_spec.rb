@@ -263,7 +263,7 @@ describe ModelPack::ClassMethods do
     end
 
     array1 = ArrayData.new
-    array1.data § 1
+    array1.data << 1
     array2 = ArrayData.new
     expect(array1.data.size).to be 1
     expect(array2.data.size).to be 0
