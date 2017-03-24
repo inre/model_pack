@@ -30,28 +30,81 @@ describe ModelPack::ClassMethods do
     expect(point.y).to be(2)
   end
 
-  it "should create embedded models" do
-    class Line
-      include ModelPack::Document
+  describe "#object" do
+    it "should create embedded models" do
+      class Line
+        include ModelPack::Document
 
-      object :from, class_name: Point
-      object :to, class_name: Point
+        object :from, class_name: Point
+        object :to, class_name: Point
 
-      def length
-         Math.sqrt((from.x-to.x)**2 + (from.y-to.y)**2)
+        def length
+          Math.sqrt((from.x - to.x)**2 + (from.y - to.y)**2)
+        end
+      end
+
+      line = Line.new(
+        from: { x: 1, y: 1 },
+        to: { x: 3, y: 5}
+      )
+      expect(line.from).to be_a(Point)
+      expect(line.to).to be_a(Point)
+      expect(line.from.attributes).to include({x: 1, y: 1})
+      expect(line.to.attributes).to include({x: 3, y: 5})
+      expect(line.length).to be_within(0.1).of(4.4)
+    end
+
+    let(:data) do
+      {
+        arr: [1, 2],
+        str: 'some_string',
+        int: 42,
+        wrapped: Wrapper.new('foo')
+      }
+    end
+
+    class Wrapper
+      attr_reader :content
+
+      def initialize(content)
+        @content = content
       end
     end
 
-    line = Line.new(
-        from: { x: 1, y: 1 },
-        to: { x: 3, y: 5}
-    )
-    expect(line.from).to be_a(Point)
-    expect(line.to).to be_a(Point)
-    expect(line.from.attributes).to include({x: 1, y: 1})
-    expect(line.to.attributes).to include({x: 3, y: 5})
-    expect(line.length).to be_within(0.1).of(4.4)
+    class WrapTest
+      include ModelPack::Document
+
+      object :int, class_name: Wrapper
+      object :str, class_name: Wrapper
+      object :arr, class_name: Wrapper
+      object :wrapped, class_name: Wrapper
+    end
+
+    subject { WrapTest.new data }
+
+    it "wraps up integer field" do
+      expect(subject.int.class).to eq(Wrapper)
+      expect(subject.int.content).to eq(data[:int])
+    end
+
+    it "wraps up string field" do
+      expect(subject.str.class).to eq(Wrapper)
+      expect(subject.str.content).to eq(data[:str])
+    end
+
+    it "wraps up array field" do
+      expect(subject.arr.class).to eq(Wrapper)
+      expect(subject.arr.content).to eq(data[:arr])
+    end
+
+    it "doesn't wrap already wrapped" do
+      expect(subject.wrapped.class).to eq(Wrapper)
+      expect(subject.wrapped.content.class).not_to eq(Wrapper)
+      expect(subject.wrapped.content).to eq('foo')
+    end
+
   end
+
 
   it "should create array of models" do
     class Polygon
@@ -275,7 +328,7 @@ describe ModelPack::ClassMethods do
 
       attribute :always_false, default: false
       attribute :always_true,  default: true
-      attribute :dynamic_default, default: lambda { 1+5 }
+      attribute :dynamic_default, default: lambda { 1 + 5 }
     end
 
     data = BooleanData.new
@@ -317,8 +370,8 @@ describe ModelPack::ClassMethods do
       attribute :second, default: 'bar'
     end
 
-    expect(BaseDocument.new.attributes).to eq(param: 'val');
-    expect(CustomDocument.new.attributes).to eq(param: 'val', first: 'foo');
-    expect(AnotherDocument.new.attributes).to eq(param: 'val', second: 'bar');
+    expect(BaseDocument.new.attributes).to eq(param: 'val')
+    expect(CustomDocument.new.attributes).to eq(param: 'val', first: 'foo')
+    expect(AnotherDocument.new.attributes).to eq(param: 'val', second: 'bar')
   end
 end
