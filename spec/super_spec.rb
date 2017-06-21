@@ -8,6 +8,9 @@ describe ModelPack::Super do
 
   class Child < Dummy
     attr_reader :args
+
+    attribute :baz
+
     def initialize(args)
       @args = args
       super args
@@ -15,7 +18,7 @@ describe ModelPack::Super do
   end
 
   describe ".initialize" do
-    let(:args) { { foo: 1, bar: "2" } }
+    let(:args) { { foo: 1, bar: "2", baz: [1, 2] } }
 
     let(:child) { Child.new(args) }
 
@@ -23,9 +26,13 @@ describe ModelPack::Super do
       expect(child.args).to eq(args)
     end
 
-    it "updates attributes as ModelPack do" do
+    it "set attributes values as ModelPack do" do
       expect(child.foo).to eq(args[:foo])
       expect(child.bar).to eq(args[:bar])
+    end
+
+    it "inherits and extends attributes" do
+      expect(child.baz).to eq(args[:baz])
     end
 
     context "non hash attributes" do

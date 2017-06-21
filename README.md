@@ -140,6 +140,13 @@ class MyClass < ModelPack::Super
 end
 
 ```
+
+Также можно расширять список аттрибутов от родителя к наследнику
+```ruby
+class Child < MyClass
+  attribute :baz # attributes `foo` and `baz` are also available
+end
+```
 ## Contributing
 
 1. Fork it ( https://github.com/inre/model_pack/fork )
