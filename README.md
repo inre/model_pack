@@ -123,6 +123,23 @@ unsecure_hash = secure_data.serializable_hash
 puts unsecure_hash
 ```
 
+### Наследование
+Для того чтобы использовать всю мощь ModelPack, но при этом не переопределять конструкор через `ModelPack::Constructor`
+существует класс `ModelPack::Super`, от которого можно наследоваться. Однако в этом случае необходимо явно передавать в
+`super` аргументы, которые вы хотите установить в модель
+```ruby
+class MyClass < ModelPack::Super
+  attribute :foo
+  attribute :bar, default: "default value"
+  
+  def initialize(args)
+    # do some work with args, may be collect from it foo and bar values
+    my_foo_bar_values = some_work_with_args(args)
+    super(my_foo_bar_values)
+  end
+end
+
+```
 ## Contributing
 
 1. Fork it ( https://github.com/inre/model_pack/fork )
