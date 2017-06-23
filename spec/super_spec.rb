@@ -48,5 +48,14 @@ describe ModelPack::Super do
         expect(child.bar).to eq("default")
       end
     end
+
+    context("with array as argument") do
+      let(:child) { Child.new([args]) }
+
+      it "set attributes values as ModelPack do" do
+        expect(child.foo).to eq(args[:foo])
+        expect(child.bar).to eq(args[:bar])
+      end
+    end
   end
 end
