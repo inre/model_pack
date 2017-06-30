@@ -7,6 +7,7 @@ module ModelPack
   autoload :Constructor,      'model_pack/constructor'
   autoload :Document,         'model_pack/document'
   autoload :Serialization,    'model_pack/serialization'
+  autoload :Super,            'model_pack/super'
 
   module Serializers
     autoload :JSON,           'model_pack/serializers/json'
