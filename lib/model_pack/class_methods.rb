@@ -39,7 +39,7 @@ module ModelPack
         serialize: serialize,
         predicate: predicate,
         as: as,
-        writer: lambda { |v| v.is_a?(Hash) && class_name ? class_name.new(v) : v })
+        writer: lambda { |v| !class_name || v.is_a?(class_name) ? v : class_name.new(v) })
     end
 
     def array(name, default: nil, serialize: nil, writer: nil, class_name: nil)
